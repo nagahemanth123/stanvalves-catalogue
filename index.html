@@ -198,7 +198,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--f-display); 
 (() => {
 	const N = 8;
 	const RATIO = 148 / 210; // A5 page, width / height
-	const MIN_PAGE = 290;    // under twice this width the book shows one page at a time
+	const MIN_PAGE = 120;    // smallest page width: the book always opens as a two-page spread, phones included
 	const pages = Array.from({length: N}, (_, i) => `pages/p${i + 1}.jpg`);
 	const names = ['Cover', 'About and range index', 'Ball valves', 'Butterfly and sanitary', 'Gate, globe and isolation', 'Check and line protection', 'Control and automation', 'Back cover'];
 	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -224,11 +224,10 @@ body { background: var(--bg); color: var(--ink); font-family: var(--f-display); 
 		$('thumbs').appendChild(t);
 	});
 
-	// the book is sized to the desk: a full spread when there is room, else one page as large as it fits
+	// the book is sized to the desk as a two-page spread (owner, 12 Nov: a book, also on phones)
 	const size = () => {
 		const W = stage.clientWidth - 16, H = stage.clientHeight - 24;
-		const spread = W >= 2 * MIN_PAGE;
-		const w = Math.max(200, Math.floor(Math.min(W, H * (spread ? 2 * RATIO : RATIO))));
+		const w = Math.max(2 * MIN_PAGE, Math.floor(Math.min(W, H * 2 * RATIO)));
 		box.style.width = `${w}px`;
 	};
 	size();
@@ -243,7 +242,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--f-display); 
 	}
 	const pf = new St.PageFlip(book, {
 		width: 1480, height: 2100, size: 'stretch', minWidth: MIN_PAGE, maxWidth: 1480, minHeight: 100, maxHeight: 2100,
-		showCover: true, usePortrait: true, autoSize: true, drawShadow: true, maxShadowOpacity: 0.5,
+		showCover: true, usePortrait: false, autoSize: true, drawShadow: true, maxShadowOpacity: 0.5,
 		flippingTime: reduce ? 300 : 850, mobileScrollSupport: false, showPageCorners: true, startPage: start, swipeDistance: 24,
 	});
 	pf.loadFromHTML(book.querySelectorAll('.page'));
